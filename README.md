@@ -1,6 +1,6 @@
 # DocQuok
 
-We’re tired of the soullessness of AI tools and agents. The cold, robotic voices. The sterile interfaces. The alerts that jolt rather than help. At work, especially in micro, small, and medium Australian businesses, tools should do more than function, they should delight. Enter DocQuok: a charming, interactive desktop pet that takes the form of the cutest marsupial on Earth: the quokka.
+We’re tired of the soullessness of AI tools and agents. The cold, robotic voices. The sterile interfaces. The alerts that jolt rather than help. Where is all the whimsy gone? Our tools should do more than function, they should delight. Enter DocQuok: a charming, interactive desktop pet that takes the form of the cutest marsupial on Earth: the quokka.
 
 At its core, DocQuok is a powerful yet approachable system security companion. Seamlessly integrating with your existing antivirus and monitoring software, DocQuok becomes the frontline messenger, instantly relaying security alerts and reports to Admins in a friendly, non-intrusive way. No more toggling between dashboards or missing critical updates, DocQuok brings the important stuff to you, quietly and efficiently.
 
