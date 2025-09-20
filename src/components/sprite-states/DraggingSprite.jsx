@@ -15,6 +15,8 @@ export default function DraggingSprite({ position, setPosition, draggable, dragg
 
   return (
     <div
+      className="quokka-sprite"
+      data-interactive
       style={{
         position: "absolute",
         left: position.x,

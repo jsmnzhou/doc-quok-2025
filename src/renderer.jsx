@@ -4,34 +4,36 @@ import Sprite from './components/Sprite';
 import QuokkaHUD from "./components/security/QuokkaHUD.jsx";
 import './styles.css'
 
-function useClickThroughWhitelist(selectors = '.btn, .hud-resize, .hud-head, [data-interactive]') {
+function useClickThroughWhitelist(selectors = '.btn, .hud-resize, .hud-head, .quokka-sprite, [data-interactive]') {
   useEffect(() => {
+    let pressed = false;
+
     const allow = () => window.quokkaWindow?.setPassThrough(false);
     const block = () => window.quokkaWindow?.setPassThrough(true);
 
-    // Start: pass through everywhere
-    block();
-
-    // Event delegation—decide based on current hover/focus
     const onMove = (e) => {
+      if (pressed) return; // stay allowed while dragging
       const el = e.target.closest(selectors);
       if (el) allow(); else block();
     };
-    const onLeaveWindow = () => block();
+
+    const onDown = (e) => {
+      const el = e.target.closest(selectors);
+      pressed = !!el;
+      if (pressed) allow(); else block();
+    };
+
+    const onUp = () => { pressed = false; block(); };
 
     window.addEventListener('pointermove', onMove, true);
-    window.addEventListener('pointerdown', onMove, true); // ensures clicks land
-    window.addEventListener('blur', onLeaveWindow);
-    // keyboard accessibility: keep clickable when focused via Tab
-    window.addEventListener('focusin', allow);
-    window.addEventListener('focusout', block);
-
+    window.addEventListener('pointerdown', onDown, true);
+    window.addEventListener('pointerup', onUp, true);
+    window.addEventListener('blur', onUp);
     return () => {
       window.removeEventListener('pointermove', onMove, true);
-      window.removeEventListener('pointerdown', onMove, true);
-      window.removeEventListener('blur', onLeaveWindow);
-      window.removeEventListener('focusin', allow);
-      window.removeEventListener('focusout', block);
+      window.removeEventListener('pointerdown', onDown, true);
+      window.removeEventListener('pointerup', onUp, true);
+      window.removeEventListener('blur', onUp);
     };
   }, [selectors]);
 }
@@ -45,7 +47,7 @@ const App = () => {
   const [view, setView] = useState("scanner");
   const [report, setReport] = useState(null); // will receive results from scanner
 
-  useClickThroughWhitelist('.btn, .hud-resize, .hud-head, [data-interactive]');
+  useClickThroughWhitelist('.btn, .hud-resize, .hud-head, .quokka-sprite, [data-interactive]');
 
   // Example: Simulate notification
   React.useEffect(() => {
@@ -62,6 +64,7 @@ const App = () => {
       <Sprite
         state={spriteState}
         hidden={hidden}
+        className="quokka-sprite"
         // onSpriteClick={() => (setDashboardOpen(true))}
         // onNotificationClick={() => setDashboardOpen(false)} // Optionally handle notification
       />

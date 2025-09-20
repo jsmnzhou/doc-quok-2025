@@ -15,6 +15,8 @@ export default function IdleSprite({ position, setPosition, draggable, dragging 
 
   return (
     <div
+      className="quokka-sprite"
+      data-interactive
       style={{
         position: "absolute",
         left: position.x,

@@ -15,6 +15,8 @@ export default function WalkingSprite({ position, direction, draggable, dragging
 
   return (
     <div
+      className="quokka-sprite"
+      data-interactive
       style={{
         position: "absolute",
         left: position.x,

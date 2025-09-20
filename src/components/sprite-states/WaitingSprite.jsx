@@ -54,9 +54,13 @@ export default function WaitingSprite({ position, setPosition, draggable, draggi
 
   // Render based on state
   return state === "idle" ? (
-    <IdleSprite position={position} draggable={draggable} dragging={dragging} />
+     <IdleSprite position={position} draggable={draggable} dragging={dragging} 
+      className="quokka-sprite"
+      data-interactive/>
   ) : (
-    <WalkingSprite position={position} direction={direction} draggable={draggable} dragging={dragging} />
+    <WalkingSprite position={position} direction={direction} draggable={draggable} dragging={dragging} 
+      className="quokka-sprite"
+      data-interactive/>
   );
 }
 
