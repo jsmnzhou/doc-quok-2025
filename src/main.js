@@ -32,7 +32,7 @@ const createWindow = () => {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools({ mode: 'detach' });
-  mainWindow.setIgnoreMouseEvents(true, { forward: true });
+  //mainWindow.setIgnoreMouseEvents(true, { forward: true });
 };
 
 // This method will be called when Electron has finished
