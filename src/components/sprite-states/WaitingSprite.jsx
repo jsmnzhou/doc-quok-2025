@@ -6,7 +6,7 @@ const WALK_RANGE = { min: 100, max: 500 }; // allowed x movement
 const STEP_SIZE = 4;                       // pixels per tick
 const DECISION_INTERVAL = 3000;            // every 3s, reconsider state
 
-export default function WaitingSprite({ position, setPosition }) {
+export default function WaitingSprite({ position, setPosition, draggable, dragging }) {
   const [state, setState] = useState("idle");
   const [direction, setDirection] = useState(1); // 1 = right, -1 = left
 
@@ -54,9 +54,9 @@ export default function WaitingSprite({ position, setPosition }) {
 
   // Render based on state
   return state === "idle" ? (
-    <IdleSprite position={position} />
+    <IdleSprite position={position} draggable={draggable} dragging={dragging} />
   ) : (
-    <WalkingSprite position={position} direction={direction} />
+    <WalkingSprite position={position} direction={direction} draggable={draggable} dragging={dragging} />
   );
 }
 

@@ -5,7 +5,7 @@ const SPRITE_FRAME = 32;       // original frame size in sprite sheet
 const FRAMES = 6;              // number of frames
 const SPRITE_DISPLAY = 128;    // scaled display size
 
-export default function IdleSprite({ position, setPosition, draggable, dragging }) {
+export default function DraggingSprite({ position, setPosition, draggable, dragging }) {
   const [frame, setFrame] = useState(0);
 
   useEffect(() => {
@@ -42,4 +42,3 @@ export default function IdleSprite({ position, setPosition, draggable, dragging 
     </div>
   );
 }
-

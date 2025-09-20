@@ -5,7 +5,7 @@ const SPRITE_SIZE = 32;
 const FRAMES = 4;  // number of frames in walking animation
 const SPRITE_DISPLAY = 128;
 
-export default function WalkingSprite({ position, direction }) {
+export default function WalkingSprite({ position, direction, draggable, dragging }) {
   const [frame, setFrame] = useState(0);
 
   useEffect(() => {
@@ -21,8 +21,10 @@ export default function WalkingSprite({ position, direction }) {
         top: position.y,
         width: SPRITE_DISPLAY,
         height: SPRITE_DISPLAY,
-        cursor: "grab",
         userSelect: "none",
+        pointerEvents: draggable ? "auto" : "none",
+        cursor: dragging ? "grabbing" : "grab",
+        zIndex: 9999,
       }}
     >
       <div

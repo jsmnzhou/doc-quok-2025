@@ -1,6 +1,6 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import WaitingSprite from "./sprite-states/WaitingSprite";
-import React, { useState, useEffect } from "react";
+import DraggingSprite from "./sprite-states/DraggingSprite";
 
 // Notification service mock
 const notificationServices = [
@@ -23,13 +23,6 @@ const notificationServices = [
   // Add more services here
 ];
 
-const SPRITE_STATES = {
-  idle: { x: 0, y: 0 },
-  walking: { x: 0, y: 0 },
-  notification: { x: 0, y: 0 },
-  peeking: { x: 0, y: 0 },
-};
-
 const SPRITE_SIZE = 256; // px
 
 export default function Sprite({ state = "idle", draggable = true, hidden = false, onSpriteClick, onNotificationClick }) {
@@ -44,6 +37,8 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
   const[showMenu, setShowMenu] = useState(false);
    const mouseStart = useRef({ x: 0, y: 0 });
   const dragThreshold = 5; // pixels
+
+  if (hidden) return null;
 
   // Keep spriteState in sync with prop unless notification is present
   useEffect(() => {
@@ -68,6 +63,29 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
     return () => clearInterval(interval);
   }, [state]);
 
+  useEffect(() => {
+    function onMouseMove(e) {
+      if (dragging) {
+        setPosition({
+          x: e.clientX - offset.x,
+          y: e.clientY - offset.y,
+        });
+        setWasDragging(true); // Mark as dragging
+      }
+    }
+    function onMouseUp() {
+      setDragging(false);
+      // If not dragging, allow click
+      setTimeout(() => setWasDragging(false), 0); // Reset after mouse up
+    }
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+    };
+  }, [dragging, offset]);
+
   const handleMouseDown = e => {
           // Only start drag if left mouse button
           if (e.button !== 0) return;
@@ -83,36 +101,15 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
           if (!wasDragging) setShowMenu(true);
         }
 
-  const handleMouseMove = e => {
-    const dx = e.clientX - mouseStart.current.x;
-    const dy = e.clientY - mouseStart.current.y;
-
-    if (!dragging && Math.hypot(dx, dy) > dragThreshold) {
-      setDragging(true);
-      setMenuVisible(false);
-    }
-
-    if (dragging) {
-      setPosition({
-        x: e.clientX - (mouseStart.current.x - position.x),
-        y: e.clientY - (mouseStart.current.y - position.y),
-      });
-    }
-  };
-
-  const handleMouseUp = () => {
-    window.removeEventListener("mousemove", handleMouseMove);
-    window.removeEventListener("mouseup", handleMouseUp);
-
-    if (!dragging) {
-      setMenuVisible(prev => !prev); // toggle menu
-    }
-  };
-
   return (
     <>
-        <div onMouseDown={handleMouseDown} onMouseClick={handleMouseClick}>
-        <WaitingSprite position={position} setPosition={setPosition} />
+        <div onMouseDown={handleMouseDown} onClick={handleMouseClick}
+        >
+          {dragging ? (
+            <DraggingSprite position={position} setPosition={setPosition} draggable={draggable} dragging={dragging} />
+          ) : (
+            <WaitingSprite position={position} setPosition={setPosition} draggable={draggable} dragging={dragging} />
+          )}
       </div>
 
       {/* Submenu popup */}
