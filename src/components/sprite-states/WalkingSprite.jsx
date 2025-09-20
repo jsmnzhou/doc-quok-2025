@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import walkingSpriteSheet from "../../assets/sprites/quokka-walk.png";
+import walkingSpriteSheet from "../../assets/sprites/quokka-walk-hat.png";
 
 const SPRITE_SIZE = 32;
 const FRAMES = 4;  // number of frames in walking animation

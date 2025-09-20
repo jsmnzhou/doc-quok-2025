@@ -3,6 +3,8 @@ import spriteSheet from "../assets/sprites/quokka-idle-1.png"; // Add your sprit
 import React, { useState, useRef, useEffect } from "react";
 import WaitingSprite from "./sprite-states/WaitingSprite";
 import DraggingSprite from "./sprite-states/DraggingSprite";
+import WavingSprite from "./sprite-states/WavingSprite";
+import WaveDetector from "./WaveDetector";
 
 // Notification service mock
 const notificationServices = [
@@ -37,8 +39,9 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
   const [spriteState, setSpriteState] = useState(state);
   const [wasDragging, setWasDragging] = useState(false);
   const[showMenu, setShowMenu] = useState(false);
-   const mouseStart = useRef({ x: 0, y: 0 });
+  const mouseStart = useRef({ x: 0, y: 0 });
   const dragThreshold = 5; // pixels
+  const [isWaving, setIsWaving] = useState(false);
 
   if (hidden) return null;
 
@@ -88,6 +91,17 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
     };
   }, [dragging, offset]);
 
+  useEffect(() => {
+    if (isWaving) {
+      setSpriteState("waving");
+      const timer = setTimeout(() => {
+        setIsWaving(false);
+        setSpriteState(state);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [isWaving, state]);
+
   const handleMouseDown = e => {
           // Only start drag if left mouse button
           if (e.button !== 0) return;
@@ -107,12 +121,15 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
     <>
         <div onMouseDown={handleMouseDown} onClick={handleMouseClick}
         >
-          {dragging ? (
+          {isWaving ? (
+            <WavingSprite position={position} setPosition={setPosition} draggable={draggable} dragging={dragging} />
+            ) : dragging ? (
             <DraggingSprite position={position} setPosition={setPosition} draggable={draggable} dragging={dragging} />
           ) : (
             <WaitingSprite position={position} setPosition={setPosition} draggable={draggable} dragging={dragging} />
           )}
       </div>
+      <WaveDetector onWave={() => setIsWaving(true)} />
 
       {/* Submenu popup */}
       {showMenu && (

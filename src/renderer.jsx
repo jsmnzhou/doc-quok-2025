@@ -60,7 +60,7 @@ const App = () => {
       <button className="btn" onClick={() => setHidden(h => !h)}>
         {hidden ? "Show Pet" : "Hide Pet"}
       </button>
-      <QuokkaHUD />
+      {/* <QuokkaHUD /> */}
       <Sprite
         state={spriteState}
         hidden={hidden}
@@ -73,7 +73,6 @@ const App = () => {
 
   );
 };
-
 const container = document.getElementById("root");
 const root = createRoot(container);
 root.render(<App />);

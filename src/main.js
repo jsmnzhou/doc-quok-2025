@@ -2,6 +2,18 @@ const { app, BrowserWindow, screen, ipcMain } = require("electron");
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 
+import { session } from "electron";
+
+app.whenReady().then(() => {
+  session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
+    if (permission === "media") {
+      callback(true); // allow camera/mic
+    } else {
+      callback(false);
+    }
+  });
+});
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
   app.quit();
@@ -21,6 +33,9 @@ const createWindow = () => {
     resizable: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: false, // ensures media devices API works
     },
   });
 
@@ -38,7 +53,7 @@ const createWindow = () => {
   });
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools({ mode: 'detach' });
+  mainWindow.webContents.openDevTools({ mode: 'detach' });
   // mainWindow.setIgnoreMouseEvents(true, { forward: true });
 };
 
@@ -47,6 +62,17 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   createWindow();
+
+  session.defaultSession.setPermissionRequestHandler(
+    (webContents, permission, callback) => {
+      console.log("Permission requested:", permission);
+      if (permission === "media") {
+        callback(true); // allow camera/mic
+      } else {
+        callback(false);
+      }
+    }
+  )
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
