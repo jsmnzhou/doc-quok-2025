@@ -1,75 +1,72 @@
-import React, { useState, useEffect } from "react";
-import spriteSheet from "./sprites/quokka-idle-1.png"; // Add your sprite sheet image here
+import React, { useState, useRef } from "react";
+import WaitingSprite from "./sprite-states/WaitingSprite";
 
-const SPRITE_STATES = {
-  idle: { x: 0, y: 0 },
-  walking: { x: 1, y: 0 },
-  notification: { x: 2, y: 0 },
-  peeking: { x: 3, y: 0 },
-};
-
-const SPRITE_SIZE = 128; // px, adjust to your sprite sheet
-
-export default function Sprite({ state = "idle", draggable = true, hidden = false }) {
+export default function Sprite({ draggable = true, hidden = false }) {
   const [position, setPosition] = useState({ x: 100, y: 100 });
+  const [menuVisible, setMenuVisible] = useState(false);
   const [dragging, setDragging] = useState(false);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
 
-  useEffect(() => {
-    function onMouseMove(e) {
-      if (dragging) {
-        setPosition({
-          x: e.clientX - offset.x,
-          y: e.clientY - offset.y,
-        });
-      }
-    }
-    function onMouseUp() {
-      setDragging(false);
-    }
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
-    return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", onMouseUp);
-    };
-  }, [dragging, offset]);
+  const mouseStart = useRef({ x: 0, y: 0 });
+  const dragThreshold = 5; // pixels
 
   if (hidden) return null;
 
-  const { x, y } = SPRITE_STATES[state];
+  const handleMouseDown = e => {
+    if (!draggable) return;
+    setDragging(false);
+    mouseStart.current = { x: e.clientX, y: e.clientY };
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleMouseMove = e => {
+    const dx = e.clientX - mouseStart.current.x;
+    const dy = e.clientY - mouseStart.current.y;
+
+    if (!dragging && Math.hypot(dx, dy) > dragThreshold) {
+      setDragging(true);
+      setMenuVisible(false);
+    }
+
+    if (dragging) {
+      setPosition({
+        x: e.clientX - (mouseStart.current.x - position.x),
+        y: e.clientY - (mouseStart.current.y - position.y),
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    window.removeEventListener("mousemove", handleMouseMove);
+    window.removeEventListener("mouseup", handleMouseUp);
+
+    if (!dragging) {
+      setMenuVisible(prev => !prev); // toggle menu
+    }
+  };
 
   return (
-    <div
-      style={{
-        position: "absolute",
-        left: position.x,
-        top: position.y,
-        width: SPRITE_SIZE,
-        height: SPRITE_SIZE,
-        pointerEvents: draggable ? "auto" : "none",
-        cursor: draggable ? "grab" : "default",
-        userSelect: "none",
-        zIndex: 9999,
-      }}
-      onMouseDown={e => {
-        setDragging(true);
-        setOffset({
-          x: e.clientX - position.x,
-          y: e.clientY - position.y,
-        });
-      }}
-    >
-      <div
-        style={{
-          width: SPRITE_SIZE,
-          height: SPRITE_SIZE,
-          backgroundImage: `url(${spriteSheet})`,
-          backgroundPosition: `-${x * SPRITE_SIZE}px -${y * SPRITE_SIZE}px`,
-          backgroundRepeat: "no-repeat",
-          imageRendering: "pixelated",
-        }}
-      />
-    </div>
+    <>
+      <div onMouseDown={handleMouseDown}>
+        <WaitingSprite position={position} setPosition={setPosition} />
+      </div>
+
+      {menuVisible && (
+        <div
+          style={{
+            position: "absolute",
+            left: position.x + 130,
+            top: position.y,
+            background: "white",
+            border: "1px solid black",
+            padding: "8px",
+            zIndex: 10000,
+          }}
+        >
+          <p>Menu Item 1</p>
+          <p>Menu Item 2</p>
+        </div>
+      )}
+    </>
   );
 }
