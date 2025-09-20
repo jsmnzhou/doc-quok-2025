@@ -17,6 +17,7 @@ DocQuok makes work safer, simpler, and just a little bit brighter.
 ## Acknowledgements
 
 Repo template: PikoCanFly (https://youtu.be/XmSQtyPjbxY).
+
 Asset inspiration: Caz Creates Games (https://caz-creates-games.itch.io).
 
 ## Getting Started
