@@ -1,0 +1,45 @@
+import React, { useState, useEffect } from "react";
+import walkingSpriteSheet from "../../assets/sprites/quokka-walk.png";
+
+const SPRITE_SIZE = 32;
+const FRAMES = 4;  // number of frames in walking animation
+const SPRITE_DISPLAY = 128;
+
+export default function WalkingSprite({ position, direction, draggable, dragging }) {
+  const [frame, setFrame] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => setFrame(prev => (prev + 1) % FRAMES), 300);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: position.x,
+        top: position.y,
+        width: SPRITE_DISPLAY,
+        height: SPRITE_DISPLAY,
+        userSelect: "none",
+        pointerEvents: draggable ? "auto" : "none",
+        cursor: dragging ? "grabbing" : "grab",
+        zIndex: 9999,
+      }}
+    >
+      <div
+        style={{
+            width: "100%",
+            height: "100%",
+            backgroundImage: `url(${walkingSpriteSheet})`,
+            backgroundPosition: `-${frame * SPRITE_DISPLAY}px 0px`,  // step in scaled pixels
+            backgroundRepeat: "no-repeat",
+            imageRendering: "pixelated",
+            backgroundSize: `${FRAMES * SPRITE_DISPLAY}px ${SPRITE_DISPLAY}px`, // scale full sheet
+            transform: direction === -1 ? "scaleX(-1)" : "scaleX(1)",
+            transformOrigin: "center",
+        }}
+      />
+    </div>
+  );
+}

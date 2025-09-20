@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from "react";
+
 import spriteSheet from "../assets/sprites/quokka-idle-1.png"; // Add your sprite sheet image here
+import React, { useState, useRef, useEffect } from "react";
+import WaitingSprite from "./sprite-states/WaitingSprite";
+import DraggingSprite from "./sprite-states/DraggingSprite";
 
 // Notification service mock
 const notificationServices = [
@@ -22,17 +25,11 @@ const notificationServices = [
   // Add more services here
 ];
 
-const SPRITE_STATES = {
-  idle: { x: 0, y: 0 },
-  walking: { x: 0, y: 0 },
-  notification: { x: 0, y: 0 },
-  peeking: { x: 0, y: 0 },
-};
-
 const SPRITE_SIZE = 256; // px
 
 export default function Sprite({ state = "idle", draggable = true, hidden = false, onSpriteClick, onNotificationClick }) {
   const [position, setPosition] = useState({ x: 100, y: 100 });
+  const [menuVisible, setMenuVisible] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [notifications, setNotifications] = useState([]);
@@ -40,6 +37,10 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
   const [spriteState, setSpriteState] = useState(state);
   const [wasDragging, setWasDragging] = useState(false);
   const[showMenu, setShowMenu] = useState(false);
+   const mouseStart = useRef({ x: 0, y: 0 });
+  const dragThreshold = 5; // pixels
+
+  if (hidden) return null;
 
   // Keep spriteState in sync with prop unless notification is present
   useEffect(() => {
@@ -63,7 +64,7 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
     const interval = setInterval(pollNotifications, 30000);
     return () => clearInterval(interval);
   }, [state]);
-  
+
   useEffect(() => {
     function onMouseMove(e) {
       if (dragging) {
@@ -87,24 +88,7 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
     };
   }, [dragging, offset]);
 
-  if (hidden) return null;
-
-  const { x, y } = SPRITE_STATES[spriteState];
-
-  return (
-    <>
-      <div
-        style={{
-          position: "fixed", // <-- changed from "absolute"
-          left: position.x,
-          top: position.y,
-          width: SPRITE_SIZE,
-          height: SPRITE_SIZE,
-          pointerEvents: draggable ? "auto" : "none",
-          cursor: dragging ? "grabbing" : "grab",          
-          zIndex: 9999,
-        }}
-        onMouseDown={e => {
+  const handleMouseDown = e => {
           // Only start drag if left mouse button
           if (e.button !== 0) return;
           setDragging(true);
@@ -113,25 +97,23 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
             y: e.clientY - position.y,
           });
           setWasDragging(false); // Reset drag flag
-        }}
-        onClick={() => {
+        }
+
+  const handleMouseClick = e => {
           if (!wasDragging) setShowMenu(true);
-        }}
-        title="Click to open menu"
-      >
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            backgroundImage: `url(${spriteSheet})`,
-            backgroundPosition: `-${x * SPRITE_SIZE}px -${y * SPRITE_SIZE}px`,
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "cover",
-            imageRendering: "pixelated",
-            pointerEvents: "none", // <-- inner div should be "none"
-          }}
-        />
+        }
+
+  return (
+    <>
+        <div onMouseDown={handleMouseDown} onClick={handleMouseClick}
+        >
+          {dragging ? (
+            <DraggingSprite position={position} setPosition={setPosition} draggable={draggable} dragging={dragging} />
+          ) : (
+            <WaitingSprite position={position} setPosition={setPosition} draggable={draggable} dragging={dragging} />
+          )}
       </div>
+
       {/* Submenu popup */}
       {showMenu && (
         <div
