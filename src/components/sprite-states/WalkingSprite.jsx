@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import walkingSpriteSheet from "../sprites/quokka-walk.png";
+import walkingSpriteSheet from "../../assets/sprites/quokka-walk.png";
 
 const SPRITE_SIZE = 32;
 const FRAMES = 4;  // number of frames in walking animation
@@ -15,6 +15,8 @@ export default function WalkingSprite({ position, direction, draggable, dragging
 
   return (
     <div
+      className="quokka-sprite"
+      data-interactive
       style={{
         position: "absolute",
         left: position.x,

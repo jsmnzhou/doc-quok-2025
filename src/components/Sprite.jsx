@@ -1,3 +1,5 @@
+
+import spriteSheet from "../assets/sprites/quokka-idle-1.png"; // Add your sprite sheet image here
 import React, { useState, useRef, useEffect } from "react";
 import WaitingSprite from "./sprite-states/WaitingSprite";
 import DraggingSprite from "./sprite-states/DraggingSprite";

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import idleSpriteSheet from "../sprites/quokka-idle.png";
+import idleSpriteSheet from "../../assets/sprites/quokka-idle.png";
 
 const SPRITE_FRAME = 32;       // original frame size in sprite sheet
 const FRAMES = 6;              // number of frames
@@ -15,6 +15,8 @@ export default function IdleSprite({ position, setPosition, draggable, dragging 
 
   return (
     <div
+      className="quokka-sprite"
+      data-interactive
       style={{
         position: "absolute",
         left: position.x,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import idleSpriteSheet from "../sprites/quokka-dragging.png";
+import idleSpriteSheet from "../../assets/sprites/quokka-dragging.png";
 
 const SPRITE_FRAME = 32;       // original frame size in sprite sheet
 const FRAMES = 4;              // number of frames
@@ -15,6 +15,8 @@ export default function DraggingSprite({ position, setPosition, draggable, dragg
 
   return (
     <div
+      className="quokka-sprite"
+      data-interactive
       style={{
         position: "absolute",
         left: position.x,
