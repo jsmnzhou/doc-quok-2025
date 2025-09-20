@@ -58,9 +58,14 @@ const App = () => {
       <button className="btn" onClick={() => setHidden(h => !h)}>
         {hidden ? "Show Pet" : "Hide Pet"}
       </button>
-      <Sprite state={spriteState} hidden={hidden} />
       <QuokkaHUD />
-
+      <Sprite
+        state={spriteState}
+        hidden={hidden}
+        // onSpriteClick={() => (setDashboardOpen(true))}
+        // onNotificationClick={() => setDashboardOpen(false)} // Optionally handle notification
+      />
+ main
     </>
 
   );
