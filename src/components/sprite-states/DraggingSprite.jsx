@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import idleSpriteSheet from "../../assets/sprites/quokka-dragging.png";
+import idleSpriteSheet from "../../assets/sprites/quokka-dragging-hat.png";
 
 const SPRITE_FRAME = 32;       // original frame size in sprite sheet
 const FRAMES = 4;              // number of frames
