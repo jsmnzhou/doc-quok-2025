@@ -1,5 +1,6 @@
+import React, { useState, useRef } from "react";
+import WaitingSprite from "./sprite-states/WaitingSprite";
 import React, { useState, useEffect } from "react";
-import spriteSheet from "./sprites/quokka-idle-1.png";
 
 // Notification service mock
 const notificationServices = [
@@ -33,6 +34,7 @@ const SPRITE_SIZE = 256; // px
 
 export default function Sprite({ state = "idle", draggable = true, hidden = false, onSpriteClick, onNotificationClick }) {
   const [position, setPosition] = useState({ x: 100, y: 100 });
+  const [menuVisible, setMenuVisible] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [notifications, setNotifications] = useState([]);
@@ -40,6 +42,8 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
   const [spriteState, setSpriteState] = useState(state);
   const [wasDragging, setWasDragging] = useState(false);
   const[showMenu, setShowMenu] = useState(false);
+   const mouseStart = useRef({ x: 0, y: 0 });
+  const dragThreshold = 5; // pixels
 
   // Keep spriteState in sync with prop unless notification is present
   useEffect(() => {
@@ -63,48 +67,8 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
     const interval = setInterval(pollNotifications, 30000);
     return () => clearInterval(interval);
   }, [state]);
-  
-  useEffect(() => {
-    function onMouseMove(e) {
-      if (dragging) {
-        setPosition({
-          x: e.clientX - offset.x,
-          y: e.clientY - offset.y,
-        });
-        setWasDragging(true); // Mark as dragging
-      }
-    }
-    function onMouseUp() {
-      setDragging(false);
-      // If not dragging, allow click
-      setTimeout(() => setWasDragging(false), 0); // Reset after mouse up
-    }
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
-    return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", onMouseUp);
-    };
-  }, [dragging, offset]);
 
-  if (hidden) return null;
-
-  const { x, y } = SPRITE_STATES[spriteState];
-
-  return (
-    <>
-      <div
-        style={{
-          position: "fixed", // <-- changed from "absolute"
-          left: position.x,
-          top: position.y,
-          width: SPRITE_SIZE,
-          height: SPRITE_SIZE,
-          pointerEvents: draggable ? "auto" : "none",
-          cursor: dragging ? "grabbing" : "grab",          
-          zIndex: 9999,
-        }}
-        onMouseDown={e => {
+  const handleMouseDown = e => {
           // Only start drag if left mouse button
           if (e.button !== 0) return;
           setDragging(true);
@@ -113,25 +77,44 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
             y: e.clientY - position.y,
           });
           setWasDragging(false); // Reset drag flag
-        }}
-        onClick={() => {
+        }
+
+  const handleMouseClick = e => {
           if (!wasDragging) setShowMenu(true);
-        }}
-        title="Click to open menu"
-      >
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            backgroundImage: `url(${spriteSheet})`,
-            backgroundPosition: `-${x * SPRITE_SIZE}px -${y * SPRITE_SIZE}px`,
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "cover",
-            imageRendering: "pixelated",
-            pointerEvents: "none", // <-- inner div should be "none"
-          }}
-        />
+        }
+
+  const handleMouseMove = e => {
+    const dx = e.clientX - mouseStart.current.x;
+    const dy = e.clientY - mouseStart.current.y;
+
+    if (!dragging && Math.hypot(dx, dy) > dragThreshold) {
+      setDragging(true);
+      setMenuVisible(false);
+    }
+
+    if (dragging) {
+      setPosition({
+        x: e.clientX - (mouseStart.current.x - position.x),
+        y: e.clientY - (mouseStart.current.y - position.y),
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    window.removeEventListener("mousemove", handleMouseMove);
+    window.removeEventListener("mouseup", handleMouseUp);
+
+    if (!dragging) {
+      setMenuVisible(prev => !prev); // toggle menu
+    }
+  };
+
+  return (
+    <>
+        <div onMouseDown={handleMouseDown} onMouseClick={handleMouseClick}>
+        <WaitingSprite position={position} setPosition={setPosition} />
       </div>
+
       {/* Submenu popup */}
       {showMenu && (
         <div
