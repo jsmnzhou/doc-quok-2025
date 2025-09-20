@@ -1,20 +1,17 @@
 import { createRoot } from 'react-dom/client';
 import React, { useState, useEffect } from "react";
 import Sprite from './components/Sprite';
+import Scanner from './components/security/Scanner'; 
+import Dashboard from './components/security/Dashboard';
+import './styles.css'
 
 const App = () => {
   // MVP state management
   const [spriteState, setSpriteState] = useState("idle");
   const [hidden, setHidden] = useState(false);
-  const [report, setReport] = useState({
-    scanned: 1234,
-    vulnerabilities: 3,
-    alerts: 2,
-    antivirus: "Active",
-    calendar: "No events",
-    slack: "1 new message",
-    gmail: "2 unread emails",
-  });
+  const [view, setView] = useState("scanner");
+  const [report, setReport] = useState(null); // will receive results from scanner
+
 
   // Example: Simulate notification
   React.useEffect(() => {
@@ -22,23 +19,23 @@ const App = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  return (
+  return view === "scanner" ? (
+    <Scanner
+      onComplete={(summary) => {
+        setReport(summary);
+        setView("dashboard");
+      }}
+    />
+  ) : (
     <>
       <button onClick={() => setHidden(h => !h)}>
         {hidden ? "Show Pet" : "Hide Pet"}
       </button>
       <Sprite state={spriteState} hidden={hidden} />
-      <div style={{ color: "#fff", background: "rgba(0,0,0,0.5)", padding: 8, borderRadius: 8, marginTop: 150 }}>
-        <h2>Security Dashboard</h2>
-        <p>Files scanned: {report.scanned}</p>
-        <p>Vulnerabilities: {report.vulnerabilities}</p>
-        <p>Recent alerts: {report.alerts}</p>
-        <p>Antivirus: {report.antivirus}</p>
-        <p>Calendar: {report.calendar}</p>
-        <p>Slack: {report.slack}</p>
-        <p>Gmail: {report.gmail}</p>
-      </div>
+      <Dashboard summary={report} onRescan={() => setView("scanner")} />
+
     </>
+
   );
 };
 

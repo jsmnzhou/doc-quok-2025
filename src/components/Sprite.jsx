@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import spriteSheet from "./sprites/quokka-idle-1.png"; // Add your sprite sheet image here
+import spriteSheet from "../assets/sprites/quokka-idle-1.png"; // Add your sprite sheet image here
 
 const SPRITE_STATES = {
   idle: { x: 0, y: 0 },
