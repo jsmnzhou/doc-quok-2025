@@ -62,9 +62,13 @@ export default function WaveDetector({ onWave }) {
     playsInline
     muted
     style={{
-      width: 320,    // set desired width
-      height: 240,   // set desired height
-      border: "2px solid red", // optional: visible border for debugging
+      width: 320,
+      height: 240,
+      border: "2px solid red",
+      position: "fixed",   // position relative to the viewport
+      bottom: 0,           // stick to bottom
+      left: 0,             // stick to left
+      zIndex: 10000,       // make sure it’s on top
     }}
   />
 );

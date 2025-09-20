@@ -60,7 +60,7 @@ const App = () => {
       <button className="btn" onClick={() => setHidden(h => !h)}>
         {hidden ? "Show Pet" : "Hide Pet"}
       </button>
-      {/* <QuokkaHUD /> */}
+      <QuokkaHUD />
       <Sprite
         state={spriteState}
         hidden={hidden}
