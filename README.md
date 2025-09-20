@@ -1,14 +1,14 @@
 # DocQuok
 
-We’re tired of the soullessness of AI tools and agents. The cold, robotic voices. The sterile interfaces. The alerts that jolt rather than help. Where is all the whimsy gone? Our tools should do more than function, they should delight. Enter DocQuok: a charming, interactive desktop pet that takes the form of the cutest marsupial on Earth: the quokka.
+We’re tired of the soullessness of AI tools and agents. The cold, robotic voices. The sterile interfaces. The 'AI Agent' GPT wrapper. Where is all the whimsy gone? Our tools should do more than function, they should delight. Enter DocQuok: a charming, interactive desktop pet that takes the form of the cutest marsupial on Earth: the quokka.
 
 At its core, DocQuok is a powerful yet approachable system security companion. Seamlessly integrating with your existing antivirus and monitoring software, DocQuok becomes the frontline messenger, instantly relaying security alerts and reports to Admins in a friendly, non-intrusive way. No more toggling between dashboards or missing critical updates, DocQuok brings the important stuff to you, quietly and efficiently.
 
-But DocQuok isn’t just for IT teams. For everyone else, it serves as a whimsical notification assistant, turning dull system alerts and noisy Slack messages into pleasant, on-screen interactions. With a wave (yes, it can even see and wave back), a pop-up, or a gentle nudge, DocQuok makes sure you never miss what matters—without the stress.
+But DocQuok isn’t just for IT teams. For everyone else, it serves as a whimsical notification assistant, turning snooze-inducing system alerts and traumatising Slack messages into pleasant, on-screen interactions. With a wave (yes, it can even see and wave back), a pop-up, or a gentle nudge, DocQuok makes sure you never miss what matters—without the stress.
 
-But the real magic of DocQuok lies in its whimsy. With customisable outfits, expressive animations, and occasional reminders to stretch, sip water, or take a break, it adds gentle levity to your day. Like a digital desk buddy, DocQuok is there to lift your spirits, celebrate small wins, and make work feel just a little less like… work.
+But the real magic of DocQuok lies in its whimsy. With customisable outfits, expressive animations, and occasional reminders to stretch, sip water, or take a break, it adds a spark of joy to your day. DocQuok is there to lift your spirits, celebrate small wins, and make work feel just a little less like… work.
 
-As an Australian-built tool for Australian businesses, DocQuok is designed to grow with you. With future updates planned for deeper integration (Slack, Teams, and more), dynamic user responses, and richer animations, DocQuok is not just software—it’s your team's quirky, clever new teammate.
+As an Australian-built tool for Australian businesses, DocQuok is designed to grow with you. With future updates planned for deeper integration (Slack, Teams, and more), dynamic user responses, peer to peer interactions (imagine virtual quokka parties!!), and richer animations, DocQuok is not just software-it’s your team's quirky, clever new teammate.
 
 DocQuok makes work safer, simpler, and just a little bit brighter.
 
