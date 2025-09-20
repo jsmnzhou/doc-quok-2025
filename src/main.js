@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+const { app, BrowserWindow, screen } = require("electron");
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 
@@ -8,10 +8,16 @@ if (started) {
 }
 
 const createWindow = () => {
-  // Create the browser window.
+  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width,
+    height,
+    transparent: true,
+    frame: false,
+    alwaysOnTop: true,
+    hasShadow: false,
+    resizable: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
@@ -25,7 +31,8 @@ const createWindow = () => {
   }
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools({ mode: 'detach' });
+  mainWindow.setIgnoreMouseEvents(true, { forward: true });
 };
 
 // This method will be called when Electron has finished
