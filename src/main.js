@@ -1,6 +1,7 @@
-const { app, BrowserWindow, screen } = require("electron");
+const { app, BrowserWindow, screen, ipcMain } = require("electron");
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
+import { main } from 'framer-motion/client';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -14,6 +15,7 @@ const createWindow = () => {
     width,
     height,
     transparent: true,
+    backgroundColor: '#00000000',
     frame: false,
     alwaysOnTop: true,
     hasShadow: false,
@@ -30,9 +32,15 @@ const createWindow = () => {
     mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
 
+  // when you create the window (after loadURL)
+  mainWindow.webContents.on('did-finish-load', () => {
+    // start in pass-through mode
+    mainWindow.setIgnoreMouseEvents(true, { forward: true });
+  });
+
   // Open the DevTools.
   // mainWindow.webContents.openDevTools({ mode: 'detach' });
-  mainWindow.setIgnoreMouseEvents(true, { forward: true });
+  // mainWindow.setIgnoreMouseEvents(true, { forward: true });
 };
 
 // This method will be called when Electron has finished
@@ -57,6 +65,11 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+ipcMain.on('hud:set-pass-through', (e, { enable, forward=true }) => {
+  const win = BrowserWindow.fromWebContents(e.sender);
+  if (win) win.setIgnoreMouseEvents(enable, forward ? { forward: true } : undefined);
 });
 
 // In this file you can include the rest of your app's specific main process

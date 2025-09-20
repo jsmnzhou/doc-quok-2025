@@ -7,10 +7,59 @@
   --danger: #ff6a6a;
 }
 
-html, body, #root { height: 100%; }
+html, body, #root { height: 100%; 
+background: transparent !important;
+size: 0;
+}
 body { margin: 0; background: var(--bg); color: #e9f2ff; font-family: ui-sans-serif, system-ui, Segoe UI, Roboto, Helvetica, Arial; }
 
 .muted { color: var(--muted); font-weight: 600; letter-spacing: .2px; }
+
+/* ---------- HUD shell ---------- */
+.hud-bounds { position: fixed; inset: 0; pointer-events: none; }
+.hud {
+  position: absolute;
+  pointer-events: auto;
+  background: var(--panel);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,.45);
+  overflow: hidden;
+  /* make internals responsive to container size */
+  container-type: inline-size; /* enables @container queries. */ /* :contentReference[oaicite:5]{index=5} */
+}
+.hud-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,.06);
+  background: linear-gradient(180deg, rgba(255,255,255,.03), transparent);
+}
+.hud-title { display: flex; gap: 8px; align-items: center; font-weight: 700; }
+.hud-title img { width: 18px; height: 18px; image-rendering: pixelated; }
+.hud-actions { display: flex; gap: 8px; }
+.hud-body { position: relative; height: calc(100% - 42px); padding: 8px; }
+
+.hud-resize {
+  position: absolute; right: 0; bottom: 0; width: 16px; height: 16px; cursor: nwse-resize;
+  background:
+    linear-gradient(135deg, transparent 50%, rgba(255,255,255,.25) 50%) 0 0 / 100% 100% no-repeat;
+  opacity: .6;
+}
+
+/* ---------- Scanner compact/embedded ---------- */
+.scan-shell.embedded { height: 100%; width: 100%; border-radius: 12px; }
+.scan-shell.embedded .scan-grid { opacity: .45; }
+.scan-shell.compact .task-list { bottom: 12px; gap: 8px; }
+.scan-shell.compact .scan-head { top: 10px; }
+.scan-shell.compact .ring-text { font-size: 16px; }
+
+/* ---------- Dashboard container-responsive ---------- */
+.dash-shell { height: 100%; display: grid; grid-template-rows: auto auto 1fr; }
+@container (max-width: 520px) {
+  .cards { grid-template-columns: repeat(2, 1fr); }
+  .panels { grid-template-columns: 1fr; }
+  .panel.wide { grid-column: auto; }
+  .card-body { font-size: 18px; }
+}
 
 /* Scanner */
 .scan-shell { position: relative; height: 100vh; overflow: hidden; display: grid; place-items: center; }
