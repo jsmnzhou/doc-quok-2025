@@ -50,8 +50,8 @@ export default function NotificationSprite({ position, setPosition, draggable, d
         <div
           style={{
             position: "absolute",
-            left: "100%",           // place to the right of the sprite
-            top: 0,
+            left: "50%",          // place to the right of the sprite
+            top: "15%",
             marginLeft: 8,
             padding: "4px 6px",
             backgroundColor: "#fff",
