@@ -54,11 +54,12 @@ export default function QuokkaHUD({ initialMode = "message", onClose }) {
         drag
         dragMomentum={false}
         dragConstraints={boundsRef}
-        onDragEnd={(_, info) => setPos({ x: info.point.x, y: info.point.y })}
+        onDragEnd={(_, info) =>
+            setPos(p => ({ x: p.x + info.offset.x, y: p.y + info.offset.y }))
+        }
         animate={{ width: size.w, height: size.h, x: pos.x, y: pos.y }}
         transition={{ type: "spring", stiffness: 260, damping: 26 }}
-        layout // smooth size/position changes. :contentReference[oaicite:2]{index=2}
-      >
+        >
         <div className="hud-head">
           <div className="hud-title">
             <img src={sprite} alt="Quokka" />

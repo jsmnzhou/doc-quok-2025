@@ -3,7 +3,8 @@ import React, { useState, useRef, useEffect } from "react";
 import WaitingSprite from "./sprite-states/WaitingSprite";
 import DraggingSprite from "./sprite-states/DraggingSprite";
 import { getRandomReminder } from "./data/WorkReminders.js"; // Import the reminders
-
+import WavingSprite from "./sprite-states/WavingSprite";
+import WaveDetector from "./WaveDetector";
 
 const notificationServices = [
   {
@@ -28,7 +29,7 @@ const SPRITE_SIZE = 256; // px
 const DRAG_THRESHOLD = 5; // px — movement beyond this is considered a drag
 
 export default function Sprite({ state = "idle", draggable = true, hidden = false, onSpriteClick, onNotificationClick }) {
-  const [position, setPosition] = useState({ x: 100, y: 100 });
+  const [position, setPosition] = useState({ x: 700, y:719 });
   const [menuVisible, setMenuVisible] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -38,13 +39,13 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
   const [showMenu, setShowMenu] = useState(false);
   const [showTextBubble, setShowTextBubble] = useState(false);
   const [currentReminder, setCurrentReminder] = useState("");
-
   const bubbleTimeoutRef = useRef(null);
-
-
-
   // Track initial mouse down position to distinguish click vs drag
   const initialMousePos = useRef({ x: 0, y: 0 });
+  const [wasDragging, setWasDragging] = useState(false);
+  const mouseStart = useRef({ x: 0, y: 0 });
+  const dragThreshold = 5; // pixels
+  const [isWaving, setIsWaving] = useState(false);
 
   if (hidden) return null;
 
@@ -141,6 +142,17 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
     };
   }, [dragging, offset]);
 
+  useEffect(() => {
+    if (isWaving) {
+      setSpriteState("waving");
+      const timer = setTimeout(() => {
+        setIsWaving(false);
+        setSpriteState(state);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [isWaving, state]);
+
   const handleMouseDown = e => {
     if (e.button !== 0) return; // Only left mouse button
     initialMousePos.current = { x: e.clientX, y: e.clientY };
@@ -153,8 +165,11 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
 
   return (
     <>
+
       <div onMouseDown={handleMouseDown}>
-        {dragging ? (
+        {isWaving ? (
+            <WavingSprite position={position} setPosition={setPosition} draggable={draggable} dragging={dragging} />
+            ) : dragging ? (
           <DraggingSprite position={position} setPosition={setPosition} draggable={draggable} dragging={dragging} />
         ) : (
           <WaitingSprite position={position} setPosition={setPosition} draggable={draggable} dragging={dragging} />
@@ -199,6 +214,7 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
           </div>
         )}
       </div>
+      <WaveDetector onWave={() => setIsWaving(true)} />
       
       {/* Submenu popup */}
       {showMenu && (

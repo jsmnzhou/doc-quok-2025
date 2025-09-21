@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import idleSpriteSheet from "../../assets/sprites/quokka-idle.png";
+import idleSpriteSheet from "../../assets/sprites/quokka-idle-hat.png";
 
 const SPRITE_FRAME = 32;       // original frame size in sprite sheet
 const FRAMES = 6;              // number of frames
@@ -11,6 +11,26 @@ export default function IdleSprite({ position, setPosition, draggable, dragging 
   useEffect(() => {
     const interval = setInterval(() => setFrame(prev => (prev + 1) % FRAMES), 300);
     return () => clearInterval(interval);
+  }, []);
+
+   // Kick off OS notifications while this component is mounted
+  useEffect(() => {
+    const api = window.quokkaNotify;
+    if (!api) return; // not running under Electron
+    api.start({
+      minMs: 5000, //5 * 60_000,
+      maxMs: 10000, //10 * 60_000,
+      title: 'Quokka',
+      messages: [
+        'Scan complete — no nasties!',
+        'Remember to hydrate!',
+        'Stretch your wrists!',
+        '1 high-sev quarantined - review later!',
+      ],
+      // timeoutType: 'default', // Windows/Linux (optional)
+      // hasReply: true,         // macOS only (optional)
+    });
+    return () => { api.stop?.(); };
   }, []);
 
   return (
