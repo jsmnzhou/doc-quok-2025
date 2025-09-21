@@ -4,7 +4,7 @@ import Sprite from './components/Sprite';
 import QuokkaHUD from "./components/security/QuokkaHUD.jsx";
 import './styles.css'
 
-function useClickThroughWhitelist(selectors = '.btn, .hud-resize, .hud-head, .quokka-sprite, .quokka-menu, .quokka-menu-option, [data-interactive]') {
+function useClickThroughWhitelist(selectors = '.btn, .hud-resize, .hud-head, .quokka-sprite, .quokka-menu, .quokka-menu-option, .text-bubble, [data-interactive]') {
   useEffect(() => {
     let pressed = false;
 
@@ -49,7 +49,7 @@ const App = () => {
   const [hudMode, setHudMode] = useState("message"); // Add state for HUD mode
   const [hudVisible, setHudVisible] = useState(false); // Control HUD visibility
 
-  useClickThroughWhitelist('.btn, .hud-resize, .hud-head, .quokka-sprite, .quokka-menu, .quokka-menu-option, [data-interactive]');
+  useClickThroughWhitelist('.btn, .hud-resize, .hud-head, .quokka-sprite, .quokka-menu, .quokka-menu-option, .text-bubble, [data-interactive]');
 
   // Example: Simulate notification
   React.useEffect(() => {

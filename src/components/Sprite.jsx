@@ -2,6 +2,8 @@ import spriteSheet from "../assets/sprites/quokka-idle-1.png";
 import React, { useState, useRef, useEffect } from "react";
 import WaitingSprite from "./sprite-states/WaitingSprite";
 import DraggingSprite from "./sprite-states/DraggingSprite";
+import { getRandomReminder } from "./data/WorkReminders.js"; // Import the reminders
+
 
 const notificationServices = [
   {
@@ -34,6 +36,12 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
   const [showPopup, setShowPopup] = useState(false);
   const [spriteState, setSpriteState] = useState(state);
   const [showMenu, setShowMenu] = useState(false);
+  const [showTextBubble, setShowTextBubble] = useState(false);
+  const [currentReminder, setCurrentReminder] = useState("");
+
+  const bubbleTimeoutRef = useRef(null);
+
+
 
   // Track initial mouse down position to distinguish click vs drag
   const initialMousePos = useRef({ x: 0, y: 0 });
@@ -62,6 +70,44 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
     const interval = setInterval(pollNotifications, 30000);
     return () => clearInterval(interval);
   }, [state]);
+
+  // Text bubble system - show random reminders
+  useEffect(() => {
+    const setupBubbleInterval = () => {
+      // Clear any existing timeout
+      if (bubbleTimeoutRef.current) {
+        clearTimeout(bubbleTimeoutRef.current);
+      }
+
+      // Set random interval
+      const randomInterval = Math.floor(Math.random() * (10000 - 5000)) + 4500;
+      
+      bubbleTimeoutRef.current = setTimeout(() => {
+        if (!hidden && !dragging && !showMenu && !showPopup) {
+          setCurrentReminder(getRandomReminder());
+          setShowTextBubble(true);
+          
+          // Hide bubble after 5 seconds
+          setTimeout(() => {
+            setShowTextBubble(false);
+          }, 5000);
+        }
+        
+        // Set up next bubble
+        setupBubbleInterval();
+      }, randomInterval);
+    };
+
+    // Start the bubble system
+    setupBubbleInterval();
+
+    // Cleanup on unmount
+    return () => {
+      if (bubbleTimeoutRef.current) {
+        clearTimeout(bubbleTimeoutRef.current);
+      }
+    };
+  }, [hidden, dragging, showMenu, showPopup]);
 
   // Global mouse move & up handlers
   useEffect(() => {
@@ -113,8 +159,47 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
         ) : (
           <WaitingSprite position={position} setPosition={setPosition} draggable={draggable} dragging={dragging} />
         )}
+      {/* Text Bubble */}
+        {showTextBubble && (
+          <div
+            className="text-bubble"
+            data-interactive
+            style={{
+              position: "absolute",
+              left: position.x + SPRITE_SIZE / 2,
+              top: position.y - 60,
+              transform: 'translateX(-50%)',
+              background: "rgba(30,30,30,0.95)",
+              color: "#fff",
+              padding: "12px 16px",
+              borderRadius: "16px",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+              zIndex: 10002,
+              maxWidth: "200px",
+              fontSize: "14px",
+              fontWeight: "500",
+              pointerEvents: "none",
+              animation: "fadeIn 0.3s ease-out"
+            }}
+          >
+            {currentReminder}
+            <div
+              style={{
+                position: "absolute",
+                bottom: "-8px",
+                left: "50%",
+                transform: "translateX(-50%)",
+                width: 0,
+                height: 0,
+                borderLeft: "8px solid transparent",
+                borderRight: "8px solid transparent",
+                borderTop: "8px solid rgba(30,30,30,0.95)"
+              }}
+            />
+          </div>
+        )}
       </div>
-
+      
       {/* Submenu popup */}
       {showMenu && (
         <div
@@ -209,6 +294,15 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
           </button>
         </div>
       )}
+      {/* Add CSS animation */}
+      <style>
+        {`
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, 10px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+          }
+        `}
+      </style>
     </>
   );
 }
