@@ -37,6 +37,7 @@ export default function Dashboard({ summary, onRescan }) {
       <section className="panels">
         <div className="panel">
           <h3>Severity Mix</h3>
+          <div className="chart">
           <ResponsiveContainer width="100%" height={240}>
             <BarChart data={sev}>
               <CartesianGrid vertical={false} strokeOpacity={0.1} />
@@ -46,10 +47,12 @@ export default function Dashboard({ summary, onRescan }) {
               <Bar dataKey="v" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
+            </div>
         </div>
 
         <div className="panel">
           <h3>Detection Rate</h3>
+          <div className="chart">
           <ResponsiveContainer width="100%" height={240}>
             <RadialBarChart innerRadius="60%" outerRadius="100%" startAngle={90} endAngle={-270}
               data={[{ name: "Rate", value: detectionRate, fill: "hsl(150 90% 45%)" }]}>
@@ -60,10 +63,12 @@ export default function Dashboard({ summary, onRescan }) {
               </text>
             </RadialBarChart>
           </ResponsiveContainer>
+          </div>
         </div>
 
         <div className="panel wide">
           <h3>Recent Events</h3>
+          <div className="chart">
           <div className="events">
             {[
               { t: "Trojan.JS.Misc", sev: "High", path: "C:/Temp/build/cache-01.js", action: "Quarantined" },
@@ -79,6 +84,7 @@ export default function Dashboard({ summary, onRescan }) {
                 <div className="event-action">{e.action}</div>
               </div>
             ))}
+          </div>
           </div>
         </div>
       </section>

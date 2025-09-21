@@ -146,3 +146,10 @@ body { margin: 0; background: var(--bg); color: #e9f2ff; font-family: ui-sans-se
 .callout img { width: 24px; height: 24px; image-rendering: pixelated; }
 .callout-title { font-weight: 800; }
 .callout-sub { color: var(--muted); font-size: 12px; }
+
+.hud-bounds{position:relative; width:100vw; height:100vh;}
+.hud{position:absolute;}
+.hud-body,.hud-summary,.hud-scan,.hud-msg,.panel{min-height:0;}
+.hud-summary,.hud-scan,.events{overflow:auto;}
+.panel .chart{flex:1; min-height:120px;}
+
