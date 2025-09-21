@@ -18,8 +18,8 @@ export default function IdleSprite({ position, setPosition, draggable, dragging 
     const api = window.quokkaNotify;
     if (!api) return; // not running under Electron
     api.start({
-      minMs: 5000, //5 * 60_000,
-      maxMs: 10000, //10 * 60_000,
+      minMs: 1000, //5 * 60_000,
+      maxMs: 4000, //10 * 60_000,
       title: 'Quokka',
       messages: [
         'Scan complete — no nasties!',
