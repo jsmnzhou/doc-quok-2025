@@ -13,6 +13,26 @@ export default function IdleSprite({ position, setPosition, draggable, dragging 
     return () => clearInterval(interval);
   }, []);
 
+   // Kick off OS notifications while this component is mounted
+  useEffect(() => {
+    const api = window.quokkaNotify;
+    if (!api) return; // not running under Electron
+    api.start({
+      minMs: 5000, //5 * 60_000,
+      maxMs: 10000, //10 * 60_000,
+      title: 'Quokka',
+      messages: [
+        'Scan complete — no nasties!',
+        'Remember to hydrate!',
+        'Stretch your wrists!',
+        '1 high-sev quarantined - review later!',
+      ],
+      // timeoutType: 'default', // Windows/Linux (optional)
+      // hasReply: true,         // macOS only (optional)
+    });
+    return () => { api.stop?.(); };
+  }, []);
+
   return (
     <div
       className="quokka-sprite"

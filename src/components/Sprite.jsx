@@ -30,7 +30,7 @@ const notificationServices = [
 const SPRITE_SIZE = 256; // px
 
 export default function Sprite({ state = "idle", draggable = true, hidden = false, onSpriteClick, onNotificationClick }) {
-  const [position, setPosition] = useState({ x: 100, y: 100 });
+  const [position, setPosition] = useState({ x: 700, y:719 });
   const [menuVisible, setMenuVisible] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 });

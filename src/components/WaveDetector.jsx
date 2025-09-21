@@ -42,7 +42,7 @@ export default function WaveDetector({ onWave }) {
             movementCount++;
           }
 
-          if (movementCount >= 1) {
+          if (movementCount >= 2) {
             onWave(true);
             movementCount = 0;
             direction = null;
@@ -50,7 +50,7 @@ export default function WaveDetector({ onWave }) {
         }
         lastX = x;
       }
-    }, 200);
+    }, 50);
 
     return () => clearInterval(interval);
   }, [model, onWave]);
