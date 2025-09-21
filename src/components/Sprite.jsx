@@ -29,7 +29,7 @@ const SPRITE_SIZE = 256; // px
 const DRAG_THRESHOLD = 5; // px — movement beyond this is considered a drag
 
 export default function Sprite({ state = "idle", draggable = true, hidden = false, onSpriteClick, onNotificationClick }) {
-  const [position, setPosition] = useState({ x: 700, y:719 });
+  const [position, setPosition] = useState({ x: 500, y:719 });
   const [menuVisible, setMenuVisible] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 });

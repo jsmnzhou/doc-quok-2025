@@ -53,7 +53,7 @@ const createWindow = () => {
   });
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools({ mode: 'detach' });
+  // mainWindow.webContents.openDevTools({ mode: 'detach' });
   // mainWindow.setIgnoreMouseEvents(true, { forward: true });
 };
 
