@@ -1,10 +1,8 @@
-
-import spriteSheet from "../assets/sprites/quokka-idle-1.png"; // Add your sprite sheet image here
+import spriteSheet from "../assets/sprites/quokka-idle-1.png"; 
 import React, { useState, useRef, useEffect } from "react";
 import WaitingSprite from "./sprite-states/WaitingSprite";
 import DraggingSprite from "./sprite-states/DraggingSprite";
 
-// Notification service mock
 const notificationServices = [
   {
     name: "Gmail",
@@ -22,10 +20,10 @@ const notificationServices = [
       message: "You have 1 upcoming event.",
     }),
   },
-  // Add more services here
 ];
 
 const SPRITE_SIZE = 256; // px
+const DRAG_THRESHOLD = 5; // px — movement beyond this is considered a drag
 
 export default function Sprite({ state = "idle", draggable = true, hidden = false, onSpriteClick, onNotificationClick }) {
   const [position, setPosition] = useState({ x: 100, y: 100 });
@@ -35,21 +33,21 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
   const [notifications, setNotifications] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [spriteState, setSpriteState] = useState(state);
-  const [wasDragging, setWasDragging] = useState(false);
-  const[showMenu, setShowMenu] = useState(false);
-   const mouseStart = useRef({ x: 0, y: 0 });
-  const dragThreshold = 5; // pixels
+  const [showMenu, setShowMenu] = useState(false);
+
+  // Track initial mouse down position to distinguish click vs drag
+  const initialMousePos = useRef({ x: 0, y: 0 });
 
   if (hidden) return null;
 
-  // Keep spriteState in sync with prop unless notification is present
+  // Sync sprite state with notifications
   useEffect(() => {
     if (!notifications.some(n => n.unread > 0 || n.events > 0)) {
       setSpriteState(state);
     }
   }, [state, notifications]);
 
-  // Poll notifications every 30s and update sprite state accordingly
+  // Poll notifications every 30s
   useEffect(() => {
     async function pollNotifications() {
       const results = await Promise.all(notificationServices.map(s => s.fetch()));
@@ -65,6 +63,7 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
     return () => clearInterval(interval);
   }, [state]);
 
+  // Global mouse move & up handlers
   useEffect(() => {
     function onMouseMove(e) {
       if (dragging) {
@@ -72,14 +71,22 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
           x: e.clientX - offset.x,
           y: e.clientY - offset.y,
         });
-        setWasDragging(true); // Mark as dragging
       }
     }
-    function onMouseUp() {
-      setDragging(false);
-      // If not dragging, allow click
-      setTimeout(() => setWasDragging(false), 0); // Reset after mouse up
+
+    function onMouseUp(e) {
+      if (dragging) {
+        setDragging(false);
+
+        // Check if movement was small -> treat as click
+        const dx = Math.abs(e.clientX - initialMousePos.current.x);
+        const dy = Math.abs(e.clientY - initialMousePos.current.y);
+        if (dx < DRAG_THRESHOLD && dy < DRAG_THRESHOLD) {
+          setShowMenu(true);
+        }
+      }
     }
+
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseup", onMouseUp);
     return () => {
@@ -89,34 +96,30 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
   }, [dragging, offset]);
 
   const handleMouseDown = e => {
-          // Only start drag if left mouse button
-          if (e.button !== 0) return;
-          setDragging(true);
-          setOffset({
-            x: e.clientX - position.x,
-            y: e.clientY - position.y,
-          });
-          setWasDragging(false); // Reset drag flag
-        }
-
-  const handleMouseClick = e => {
-          if (!wasDragging) setShowMenu(true);
-        }
+    if (e.button !== 0) return; // Only left mouse button
+    initialMousePos.current = { x: e.clientX, y: e.clientY };
+    setOffset({
+      x: e.clientX - position.x,
+      y: e.clientY - position.y,
+    });
+    setDragging(true);
+  };
 
   return (
     <>
-        <div onMouseDown={handleMouseDown} onClick={handleMouseClick}
-        >
-          {dragging ? (
-            <DraggingSprite position={position} setPosition={setPosition} draggable={draggable} dragging={dragging} />
-          ) : (
-            <WaitingSprite position={position} setPosition={setPosition} draggable={draggable} dragging={dragging} />
-          )}
+      <div onMouseDown={handleMouseDown}>
+        {dragging ? (
+          <DraggingSprite position={position} setPosition={setPosition} draggable={draggable} dragging={dragging} />
+        ) : (
+          <WaitingSprite position={position} setPosition={setPosition} draggable={draggable} dragging={dragging} />
+        )}
       </div>
 
       {/* Submenu popup */}
       {showMenu && (
         <div
+          className="quokka-menu"
+          data-interactive
           style={{
             position: "fixed",
             left: position.x + SPRITE_SIZE,
@@ -132,25 +135,31 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
         >
           <h4>Quokka Menu</h4>
           <button
+            className="quokka-menu-option"
+            data-interactive
             style={{ margin: "8px 0", width: "100%" }}
             onClick={() => {
               setShowMenu(false);
-              if (typeof onSpriteClick === "function") onSpriteClick(); // Open dashboard
+              if (typeof onSpriteClick === "function") onSpriteClick();
             }}
           >
             Open Dashboard
           </button>
           <button
+            className="quokka-menu-option"
+            data-interactive
             style={{ margin: "8px 0", width: "100%" }}
             onClick={() => {
               setShowMenu(false);
-              setShowPopup(true); // Show notifications
-              if (typeof onNotificationClick === "function") onNotificationClick(); // Optionally notify parent
+              setShowPopup(true);
+              if (typeof onNotificationClick === "function") onNotificationClick();
             }}
           >
             Check Notifications
           </button>
           <button
+            className="quokka-menu-option"
+            data-interactive
             style={{ margin: "8px 0", width: "100%" }}
             onClick={() => setShowMenu(false)}
           >
@@ -158,9 +167,12 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
           </button>
         </div>
       )}
+
       {/* Notifications popup */}
       {showPopup && notifications.length > 0 && (
         <div
+          className="quokka-menu"
+          data-interactive
           style={{
             position: "fixed",
             left: position.x + SPRITE_SIZE,
@@ -192,7 +204,7 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
               </li>
             ))}
           </ul>
-          <button onClick={() => setShowPopup(false)} style={{ marginTop: 8 }}>
+          <button className = "btn" onClick={() => setShowPopup(false)} style={{ marginTop: 8 }}>
             Close
           </button>
         </div>

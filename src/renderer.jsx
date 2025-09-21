@@ -4,7 +4,7 @@ import Sprite from './components/Sprite';
 import QuokkaHUD from "./components/security/QuokkaHUD.jsx";
 import './styles.css'
 
-function useClickThroughWhitelist(selectors = '.btn, .hud-resize, .hud-head, .quokka-sprite, [data-interactive]') {
+function useClickThroughWhitelist(selectors = '.btn, .hud-resize, .hud-head, .quokka-sprite, .quokka-menu, .quokka-menu-option, [data-interactive]') {
   useEffect(() => {
     let pressed = false;
 
@@ -46,8 +46,10 @@ const App = () => {
   const [hidden, setHidden] = useState(false);
   const [view, setView] = useState("scanner");
   const [report, setReport] = useState(null); // will receive results from scanner
+  const [hudMode, setHudMode] = useState("message"); // Add state for HUD mode
+  const [hudVisible, setHudVisible] = useState(false); // Control HUD visibility
 
-  useClickThroughWhitelist('.btn, .hud-resize, .hud-head, .quokka-sprite, [data-interactive]');
+  useClickThroughWhitelist('.btn, .hud-resize, .hud-head, .quokka-sprite, .quokka-menu, .quokka-menu-option, [data-interactive]');
 
   // Example: Simulate notification
   React.useEffect(() => {
@@ -55,18 +57,36 @@ const App = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  const handleSpriteClick = () => {
+    setHudVisible(true);
+    setHudMode("message"); // Set to dashboard mode
+  };
+
+  const handleNotificationClick = () => {
+    console.log("Notification clicked");
+    // You could set a different mode for notifications if needed
+  };
+
   return (
     <>
       <button className="btn" onClick={() => setHidden(h => !h)}>
         {hidden ? "Show Pet" : "Hide Pet"}
       </button>
-      <QuokkaHUD />
+
+      {/* Conditionally render HUD */}
+      {hudVisible && (
+        <QuokkaHUD 
+          initialMode={hudMode} 
+          onClose={() => setHudVisible(false)}
+        />
+      )}
+
       <Sprite
         state={spriteState}
         hidden={hidden}
         className="quokka-sprite"
-        // onSpriteClick={() => (setDashboardOpen(true))}
-        // onNotificationClick={() => setDashboardOpen(false)} // Optionally handle notification
+        onSpriteClick={handleSpriteClick}
+        onNotificationClick={handleNotificationClick}
       />
  main
     </>

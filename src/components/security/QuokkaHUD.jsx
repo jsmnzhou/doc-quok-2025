@@ -5,14 +5,15 @@ import Dashboard from "./Dashboard.jsx";
 
 const modes = { message: "message", scan: "scan", summary: "summary" };
 
-export default function QuokkaHUD() {
+export default function QuokkaHUD({ initialMode = "message", onClose }) {
     //   useClickThroughWhitelist();
   // position + size
   const boundsRef = useRef(null);
   const [pos, setPos] = useState({ x: 24, y: 24 });
   const [size, setSize] = useState({ w: 420, h: 240 }); // small by default
-  const [mode, setMode] = useState(modes.message);
+  const [mode, setMode] = useState(initialMode);
   const [summary, setSummary] = useState(null);
+
 
   // target sizes per mode
   const targets = {
@@ -64,6 +65,7 @@ export default function QuokkaHUD() {
             <span>Quokka AV</span>
           </div>
           <div className="hud-actions">
+            <button className="btn ghost" onClick={onClose}>×</button>
             {mode !== modes.scan && (
               <button className="btn ghost" onClick={() => setMode(modes.scan)}>Scan</button>
             )}
