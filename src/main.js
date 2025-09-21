@@ -1,10 +1,24 @@
 const { app, BrowserWindow, screen, ipcMain } = require("electron");
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
-
+import { getOAuth2Client } from './components/OAuth2Client';
+import { fetchNewGmailNotifications } from "./components/GmailNotifications.jsx";
 import { session } from "electron";
 
-app.whenReady().then(() => {
+let notifications = []; // current notifications
+let seenMessageIds = new Set(); // track seen message IDs
+
+async function pollGmail() {
+  const auth = await getOAuth2Client(); // get OAuth2 client
+  console.log(auth.credentials)
+  notifications = await fetchNewGmailNotifications(notifications, seenMessageIds, auth);
+  console.log("Updated notifications:", notifications);
+}
+
+
+app.whenReady().then(async () => {
+  // pollGmail()
+
   session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
     if (permission === "media") {
       callback(true); // allow camera/mic

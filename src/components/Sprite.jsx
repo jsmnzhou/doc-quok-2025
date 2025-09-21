@@ -5,6 +5,7 @@ import WaitingSprite from "./sprite-states/WaitingSprite";
 import DraggingSprite from "./sprite-states/DraggingSprite";
 import WavingSprite from "./sprite-states/WavingSprite";
 import WaveDetector from "./WaveDetector";
+import NotificationSprite from "./sprite-states/NotificationSprite";
 
 // Notification service mock
 const notificationServices = [
@@ -42,6 +43,7 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
   const mouseStart = useRef({ x: 0, y: 0 });
   const dragThreshold = 5; // pixels
   const [isWaving, setIsWaving] = useState(false);
+  const [currentNotificationIndex, setCurrentNotificationIndex] = useState(0);
 
   if (hidden) return null;
 
@@ -51,6 +53,19 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
       setSpriteState(state);
     }
   }, [state, notifications]);
+
+  useEffect(() => {
+    if (notifications.length > 0) {
+      setSpriteState("notification");
+
+      const timer = setTimeout(() => {
+        setNotifications(prev => prev.slice(1)); // remove the first notification
+        if (notifications.length === 1) setSpriteState(state); // revert if no more notifications
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [notifications, state]);
 
   // Poll notifications every 30s and update sprite state accordingly
   useEffect(() => {
@@ -117,11 +132,15 @@ export default function Sprite({ state = "idle", draggable = true, hidden = fals
           if (!wasDragging) setShowMenu(true);
         }
 
+  const currentNotification = notifications[currentNotificationIndex];
+
   return (
     <>
         <div onMouseDown={handleMouseDown} onClick={handleMouseClick}
         >
-          {isWaving ? (
+          {currentNotification ? (
+            <NotificationSprite position={position} setPosition={setPosition} draggable={draggable} dragging={dragging} notifications={[currentNotification]} setNotifications={setNotifications} />
+          ) : isWaving ? (
             <WavingSprite position={position} setPosition={setPosition} draggable={draggable} dragging={dragging} />
             ) : dragging ? (
             <DraggingSprite position={position} setPosition={setPosition} draggable={draggable} dragging={dragging} />

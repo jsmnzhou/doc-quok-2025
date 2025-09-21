@@ -38,7 +38,6 @@ function useClickThroughWhitelist(selectors = '.btn, .hud-resize, .hud-head, .qu
   }, [selectors]);
 }
 
-
 const App = () => {
   // useClickThroughWhitelist();
   // MVP state management
@@ -60,7 +59,7 @@ const App = () => {
       <button className="btn" onClick={() => setHidden(h => !h)}>
         {hidden ? "Show Pet" : "Hide Pet"}
       </button>
-      {/* <QuokkaHUD /> */}
+      <QuokkaHUD />
       <Sprite
         state={spriteState}
         hidden={hidden}
